@@ -1,4 +1,4 @@
-# DGFEM for Acoustic Wave Propagation - GUI
+# Graphical User Interface - DGFEM for Acoustic Wave Propagation
 
 [![version](https://img.shields.io/badge/version-1.0.0-red)](https://github.com/skhelladi/DGFEM-CAA/releases/tag/v1.0.0) 
 [![compilers](https://img.shields.io/badge/c++-17%20|%2020-27ae60.svg)](https://github.com/skhelladi/DGFEM-CAA/releases/tag/v1.3.5) 
