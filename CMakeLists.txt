@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets core gui opengl xml  sql svg charts webenginewidgets printsupport)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(nlohmann_json 3.2.0 REQUIRED)
 
 set(PROJECT_SOURCES
         main.cpp
