@@ -362,28 +362,28 @@ void MainWindow::on_action_Load_Gmsh_mesh_file_triggered()
 
 void MainWindow::on_action_Open_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open project File"),QDir::currentPath(),tr("Files (*.json)"));
+    projectFile = QFileDialog::getOpenFileName(this, tr("Open project File"),QDir::currentPath(),tr("Files (*.json)"));
 
-    if (fileName.isEmpty())
+    if (projectFile.isEmpty())
         return;
 
-    QFile file(fileName);
+    QFile file(projectFile);
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
-        QMessageBox::warning(this, tr("Project file"),tr("Cannot read file %1:\n%2.").arg(fileName).arg(file.errorString()));
+        QMessageBox::warning(this, tr("Project file"),tr("Cannot read file %1:\n%2.").arg(projectFile).arg(file.errorString()));
         return;
     }
 
     QTextStream ReadFile(&file);
     ui->textEdit_config->setText(ReadFile.readAll());
 
-    std::ifstream infile(fileName.toStdString().c_str());
+    std::ifstream infile(projectFile.toStdString().c_str());
     infile >> jsonData;
     infile.close();
 
     setFields();
 
-    QString title =  QCoreApplication::organizationName()+tr(" - ")+fileName;
+    QString title =  QCoreApplication::organizationName()+tr(" - ")+projectFile;
     setWindowTitle(title);
 
     statusBar()->showMessage(tr("Project loaded"), 2000);
@@ -436,28 +436,24 @@ void MainWindow::on_action_About_triggered()
 void MainWindow::on_action_Save_triggered()
 {
     QString project_filename=tr("project.json");
-    QString projectFileName = QFileDialog::getSaveFileName(this, tr("Save Project File"),project_filename,tr("Project files (*.json)"));
+    projectFile = QFileDialog::getSaveFileName(this, tr("Save Project File"),project_filename,tr("Project files (*.json)"));
 
-    if (projectFileName.isEmpty())
+    if (projectFile.isEmpty())
         return;
 
-    QFile file(projectFileName);
+    QFile file(projectFile);
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
-        QMessageBox::warning(this, tr("Project file"),tr("Cannot write file %1:\n%2.").arg(projectFileName).arg(file.errorString()));
+        QMessageBox::warning(this, tr("Project file"),tr("Cannot write file %1:\n%2.").arg(projectFile).arg(file.errorString()));
         return;
     }
 
     getFields();
-
-    std::ofstream outfile(projectFileName.toStdString().c_str());
+    std::ofstream outfile(projectFile.toStdString().c_str());
     outfile<<jsonData;
-    //    jsonData = nlohmann::ordered_json::parse(outfile);
-
-
     outfile.close();
 
-    QString title =  QCoreApplication::organizationName()+tr(" - ")+projectFileName;
+    QString title =  QCoreApplication::organizationName()+tr(" - ")+projectFile;
     setWindowTitle(title);
 
     statusBar()->showMessage(tr("File saved"), 2000);
@@ -568,7 +564,7 @@ void MainWindow::on_toolButton_Src_apply_clicked()
             cb->addItems(listSrc);
             cb->setStyleSheet("QComboBox {font: bold "+QString::number(12)+"px;}");
             ui->tableWidget_Src->setCellWidget(i,0,cb);
-            ui->tableWidget_Src->setItem(i,1, new QTableWidgetItem("\"\"")); //formula/data file name
+            ui->tableWidget_Src->setItem(i,1, new QTableWidgetItem("")); //formula/data file name
             ui->tableWidget_Src->setItem(i,2, new QTableWidgetItem("0.0")); //X
             ui->tableWidget_Src->setItem(i,3, new QTableWidgetItem("0.0")); //Y
             ui->tableWidget_Src->setItem(i,4, new QTableWidgetItem("0.0")); //Z
@@ -585,5 +581,18 @@ void MainWindow::on_toolButton_Src_apply_clicked()
 
     }
     ui->tableWidget_Src->show();
+}
+
+
+void MainWindow::on_commandLinkButton_save_clicked()
+{
+  if(projectFile!="")
+  {
+      getFields();
+      std::ofstream outfile(projectFile.toStdString().c_str());
+      outfile<<jsonData;
+      outfile.close();
+  }else
+      on_action_Save_triggered();
 }
 

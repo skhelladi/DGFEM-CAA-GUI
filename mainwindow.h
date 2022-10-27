@@ -63,9 +63,12 @@ private slots:
 
     void on_toolButton_Src_apply_clicked();
 
+    void on_commandLinkButton_save_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initTerminal();
     ordered_json jsonData;
+    QString projectFile="";
 };
 #endif // MAINWINDOW_H
