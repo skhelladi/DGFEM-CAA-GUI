@@ -11,8 +11,13 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets core gui opengl xml  sql svg charts webenginewidgets printsupport)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+set(QT_DIR "/opt/Qt/5.15.2/gcc_64/lib/cmake/Qt5")
+set(CMAKE_PREFIX_PATH "/opt/Qt/5.15.2/gcc_64")
+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets core gui opengl xml  sql svg charts webenginewidgets) #Qt${QT_VERSION_MAJOR}::PrintSupport)
+#find_package(Qt5 REQUIRED COMPONENTS PrintSupport)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets PrintSupport)
+
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
 set(PROJECT_SOURCES
@@ -20,6 +25,10 @@ set(PROJECT_SOURCES
         src/mainwindow.cpp
         src/mainwindow.h
         src/mainwindow.ui
+        3rdParty/qcustomplot/qcustomplot.cpp
+        3rdParty/qcustomplot/qcustomplot.h
+#        3rdParty/qcustomplot/examples/text-document-integration/qcpdocumentobject.cpp
+#        3rdParty/qcustomplot/examples/text-document-integration/qcpdocumentobject.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -45,7 +54,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(DGFEM-CAA-UI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets -lqtermwidget5)
+target_link_libraries(DGFEM-CAA-UI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport -lqtermwidget5)
 
 set_target_properties(DGFEM-CAA-UI PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER https://skhelladi.github.io/DGFEM-CAA/

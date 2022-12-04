@@ -14,62 +14,139 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_16">
     <item row="0" column="0">
      <widget class="QWidget" name="widget" native="true">
-      <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0" colspan="2">
-        <widget class="QSplitter" name="splitter">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <widget class="QTabWidget" name="tabWidget">
+      <layout class="QFormLayout" name="formLayout"/>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QSplitter" name="splitter_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QFrame" name="frame_2">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_15">
+        <item row="0" column="0">
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <widget class="QTabWidget" name="tabWidget">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="tabPosition">
+            <enum>QTabWidget::South</enum>
+           </property>
+           <property name="tabShape">
+            <enum>QTabWidget::Rounded</enum>
+           </property>
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <widget class="QWidget" name="tab_Conv">
+            <attribute name="title">
+             <string>Convergence</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <item row="0" column="0">
+              <widget class="QCustomPlot" name="qcustomplot_convergence" native="true"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_Obs">
+            <attribute name="title">
+             <string>Observers</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_11">
+             <item row="0" column="0">
+              <widget class="QCustomPlot" name="qcustomplot_observers" native="true"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QFrame" name="frame">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_add_term">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+              <bold>true</bold>
+              <underline>false</underline>
+             </font>
+            </property>
+            <property name="text">
+             <string>New terminal</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_rm_term">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+              <bold>true</bold>
+              <underline>false</underline>
+             </font>
+            </property>
+            <property name="text">
+             <string>Remove terminal</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <widget class="QTermWidget" name="termwidget" native="true">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
-            <bold>true</bold>
+            <bold>false</bold>
            </font>
           </property>
-          <property name="tabPosition">
-           <enum>QTabWidget::South</enum>
-          </property>
-          <property name="tabShape">
-           <enum>QTabWidget::Rounded</enum>
-          </property>
-          <property name="currentIndex">
-           <number>1</number>
-          </property>
-          <widget class="QWidget" name="tab">
-           <attribute name="title">
-            <string>Tab 1</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0">
-             <widget class="QFrame" name="frame">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_2">
-           <attribute name="title">
-            <string>Tab 2</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_11">
-            <item row="0" column="0">
-             <widget class="QTextEdit" name="textEdit_config"/>
-            </item>
-           </layout>
-          </widget>
          </widget>
-        </widget>
-       </item>
-      </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -80,7 +157,7 @@
      <x>0</x>
      <y>0</y>
      <width>1199</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -123,7 +200,7 @@
    <property name="minimumSize">
     <size>
      <width>400</width>
-     <height>322</height>
+     <height>389</height>
     </size>
    </property>
    <property name="font">
@@ -146,21 +223,35 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout_3">
-     <item row="3" column="0">
-      <widget class="Line" name="line_2">
+     <item row="5" column="2">
+      <widget class="Line" name="line">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QCommandLinkButton" name="commandLinkButton_save">
+     <item row="0" column="2">
+      <widget class="QToolButton" name="toolButton_Load_solver">
        <property name="text">
-        <string>&amp;Save</string>
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEdit_solver">
+       <property name="text">
+        <string>/home/khelladi/Codes/0.Computational_Physics/0.CAA/DGFEM-CAA/build/bin/dgalerkin</string>
        </property>
       </widget>
      </item>
      <item row="0" column="0">
+      <widget class="QLabel" name="label_27">
+       <property name="text">
+        <string>Solver</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="3">
       <widget class="QToolBox" name="toolBox">
        <property name="font">
         <font>
@@ -172,15 +263,15 @@
         <enum>QFrame::NoFrame</enum>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="page_Mesh">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>373</width>
-          <height>384</height>
+          <width>382</width>
+          <height>441</height>
          </rect>
         </property>
         <attribute name="label">
@@ -266,8 +357,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>380</width>
-          <height>384</height>
+          <width>392</width>
+          <height>427</height>
          </rect>
         </property>
         <attribute name="label">
@@ -474,8 +565,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>373</width>
-          <height>384</height>
+          <width>382</width>
+          <height>441</height>
          </rect>
         </property>
         <attribute name="label">
@@ -665,8 +756,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>373</width>
-          <height>384</height>
+          <width>382</width>
+          <height>441</height>
          </rect>
         </property>
         <attribute name="label">
@@ -742,8 +833,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>373</width>
-          <height>384</height>
+          <width>382</width>
+          <height>441</height>
          </rect>
         </property>
         <attribute name="label">
@@ -788,84 +879,19 @@
        </widget>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+     <item row="8" column="0" colspan="2">
+      <widget class="QCommandLinkButton" name="commandLinkButton_save">
+       <property name="text">
+        <string>&amp;Save</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dockWidget_Output">
-   <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="floating">
-    <bool>false</bool>
-   </property>
-   <property name="windowTitle">
-    <string>Output</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_Outlet">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>6</number>
+     <item row="7" column="0" colspan="3">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QToolButton" name="toolButton_add_term">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-           <bold>true</bold>
-           <underline>false</underline>
-          </font>
-         </property>
-         <property name="text">
-          <string>New terminal</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="toolButton_rm_term">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-           <bold>true</bold>
-           <underline>false</underline>
-          </font>
-         </property>
-         <property name="text">
-          <string>Remove terminal</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="1" column="0">
-      <widget class="QTermWidget" name="termwidget" native="true"/>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -992,6 +1018,12 @@
    <header location="global">qtermwidget5/qtermwidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>3rdParty/qcustomplot/qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -1024,22 +1056,6 @@
     <hint type="destinationlabel">
      <x>95</x>
      <y>235</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionOutputs</sender>
-   <signal>triggered(bool)</signal>
-   <receiver>dockWidget_Output</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>721</y>
     </hint>
    </hints>
   </connection>

@@ -51,6 +51,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->toolBox->setCurrentIndex(0);
     ui->tabWidget->setCurrentIndex(0);
 
+    ui->termwidget->sendText(tr("mkdir results\nclear\n"));
+//    ui->termwidget->
+    ui->termwidget->sendText(tr("export TERM=linux\nclear\n"));
+
     showMaximized();
 }
 
@@ -329,7 +333,7 @@ void MainWindow::on_toolButton_add_term_clicked()
 {
     ui->termwidget->close();
     ui->termwidget=new QTermWidget();
-    ui->gridLayout_2->addWidget(ui->termwidget, 1, 0, 1, 1);
+    ui->gridLayout->addWidget(ui->termwidget, 1, 0, 1, 1);
     ui->termwidget->show();
     initTerminal();
 
@@ -375,7 +379,7 @@ void MainWindow::on_action_Open_triggered()
     }
 
     QTextStream ReadFile(&file);
-    ui->textEdit_config->setText(ReadFile.readAll());
+//    ui->textEdit_config->setText(ReadFile.readAll());
 
     std::ifstream infile(projectFile.toStdString().c_str());
     infile >> jsonData;
@@ -594,5 +598,35 @@ void MainWindow::on_commandLinkButton_save_clicked()
       outfile.close();
   }else
       on_action_Save_triggered();
+}
+
+
+void MainWindow::on_actionRun_triggered()
+{
+    std::string command;
+    //m_position=0;
+//    ui->termwidget->sendText(tr("clear &"));
+    command=ui->lineEdit_solver->text().toStdString()+" "+projectFile.toStdString()+"\r";
+    ui->termwidget->sendText(tr(command.c_str()));
+}
+
+
+void MainWindow::on_toolButton_Load_solver_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Splver File"),QDir::currentPath(),tr("Files (*)"));
+
+    if (fileName.isEmpty())
+        return;
+
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text))
+    {
+        QMessageBox::warning(this, tr("Solver"),tr("Cannot read solver file %1:\n%2.").arg(fileName).arg(file.errorString()));
+        return;
+    }
+
+    ui->lineEdit_solver->setText(fileName);
+
+    statusBar()->showMessage(tr("Mesh loaded"), 2000);
 }
 

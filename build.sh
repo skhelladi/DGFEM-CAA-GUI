@@ -36,13 +36,13 @@ else
 	echo "G++ installed.";
 fi
 
-dpkg -s libqtermwidget5-0-dev > /dev/null 2>&1;
+dpkg -s libqtermwidget5-1-dev > /dev/null 2>&1;
 if [ $? -eq 0 ]; then
-	echo "libqtermwidget5-0-dev found.";
+	echo "libqtermwidget5-1-dev found.";
 else
-	echo "libqtermwidget5-0-dev not found, installing...";
-	sudo apt-get -y install libqtermwidget5-0-dev;
-	echo "libqtermwidget5-0-dev installed.";
+	echo "libqtermwidget5-1-dev not found, installing...";
+	sudo apt-get -y install libqtermwidget5-1-dev;
+	echo "libqtermwidget5-1-dev installed.";
 fi
 
 dpkg -s libvtk9-dev > /dev/null 2>&1;
@@ -74,10 +74,10 @@ fi
 
 if [ ! -d "3rdParty/gmsh" ]; then
 	echo "Gmsh not found, installing...";
-	wget http://gmsh.info/bin/Linux/gmsh-4.10.5-Linux64-sdk.tgz
-	tar -xf gmsh-4.10.5-Linux64-sdk.tgz
-	rm -rf gmsh-4.10.5-Linux64-sdk.tgz
-	mv gmsh-4.10.5-Linux64-sdk 3rdParty/gmsh
+	wget http://gmsh.info/bin/Linux/gmsh-4.11.0-Linux64-sdk.tgz
+	tar -xf gmsh-4.11.0-Linux64-sdk.tgz
+	rm -rf gmsh-4.11.0-Linux64-sdk.tgz
+	mv gmsh-4.11.0-Linux64-sdk 3rdParty/gmsh
 	echo "Gmsh installed."
 else
        echo "Gmsh found.";
@@ -106,6 +106,19 @@ cd 3rdParty/eigen/
 export INCLUDE=${PWD}:${INCLUDE}
 cd ../../
 
+if [ ! -d "3rdParty/qcustomplot" ]; then
+	echo "QCustomPlot not found, installing...";
+  	wget https://www.qcustomplot.com/release/2.1.0fixed/QCustomPlot.tar.gz
+ 	tar -xf QCustomPlot.tar.gz
+ 	rm -rf QCustomPlot.tar.gz
+ 	mv qcustomplot 3rdParty/qcustomplot
+	echo "QCustomPlot installed."
+else
+	echo "QCustomPlot found."
+fi
+cd 3rdParty/eigen/
+export INCLUDE=${PWD}:${INCLUDE}
+cd ../../
 
 echo "[2] Build sources.";
 

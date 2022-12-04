@@ -65,6 +65,10 @@ private slots:
 
     void on_commandLinkButton_save_clicked();
 
+    void on_actionRun_triggered();
+
+    void on_toolButton_Load_solver_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initTerminal();
