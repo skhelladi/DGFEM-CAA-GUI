@@ -82,6 +82,8 @@ private slots:
 
     void updatePlot();
 
+    void on_actionAbout_Qt_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initTerminal();

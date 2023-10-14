@@ -190,6 +190,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="action_About"/>
+    <addaction name="actionAbout_Qt"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Views"/>
@@ -365,7 +366,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>388</width>
+          <width>392</width>
           <height>441</height>
          </rect>
         </property>
@@ -1062,6 +1063,11 @@
    </property>
    <property name="text">
     <string>&amp;View results</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
    </property>
   </action>
  </widget>

@@ -622,7 +622,7 @@ void MainWindow::on_actionRun_triggered()
 
 void MainWindow::on_toolButton_Load_solver_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Splver File"),QDir::currentPath(),tr("Files (*)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Solver File"),QDir::currentPath(),tr("Files (*)"));
 
     if (fileName.isEmpty())
         return;
@@ -754,3 +754,9 @@ void MainWindow::updatePlot()
         std::cout << ' ' << *it;
     std::cout << '\n';
 }
+
+void MainWindow::on_actionAbout_Qt_triggered()
+{
+    QMessageBox::aboutQt(this, "About Qt");
+}
+
