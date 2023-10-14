@@ -40,8 +40,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_TableHeader.clear();
     m_TableHeader<<"Type                                         "<<"fct                                                                        "
-                 <<"X[m]   "<<"Y[m]   "<<"Z[m]   "<<"Size[m]   "
-                <<"amplitude[Pa]   "<<"Frequency[Hz]   "<<"Phase[rad]   "<<"Duration[s]   ";
+                  <<"X[m]   "<<"Y[m]   "<<"Z[m]   "<<"Size[m]   "
+                  <<"amplitude[Pa]   "<<"Frequency[Hz]   "<<"Phase[rad]   "<<"Duration[s]   ";
     ui->tableWidget_Src->setColumnCount(10);
     ui->tableWidget_Src->setHorizontalHeaderLabels(m_TableHeader);
     ui->tableWidget_Src->horizontalHeader()->setStyleSheet("QHeaderView {font: bold "+QString::number(textSize)+"px;}");
@@ -52,11 +52,19 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tabWidget->setCurrentIndex(0);
 
     ui->termwidget->sendText(tr("mkdir results\nclear\n"));
-//    ui->termwidget->
+    //    ui->termwidget->
     ui->termwidget->sendText(tr("export TERM=linux\nclear\n"));
+
+    // timer setup
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
+    ui->qcustomplot_convergence->addGraph();
+    ui->qcustomplot_convergence->addGraph();
+
 
     showMaximized();
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -65,7 +73,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::getFields()
 {
-//    jsonData["configurationFile"]="file.conf";
+    //    jsonData["configurationFile"]="file.conf";
     jsonData.clear();
     jsonData["mesh"]["File"]=ui->lineEdit_mesh->text().toStdString();
 
@@ -97,7 +105,7 @@ void MainWindow::getFields()
     for(int i=0;i<ui->tableWidget_Init->rowCount();i++)
     {
         jsonData["initialization"]["initialCondition"+QString::number(i+1).toStdString()]["type"] =
-                qobject_cast<QComboBox*>(ui->tableWidget_Init->cellWidget(i,0))->currentText().toStdString();
+            qobject_cast<QComboBox*>(ui->tableWidget_Init->cellWidget(i,0))->currentText().toStdString();
         jsonData["initialization"]["initialCondition"+QString::number(i+1).toStdString()]["x"] = ui->tableWidget_Init->item(i,1)->text().toDouble();
         jsonData["initialization"]["initialCondition"+QString::number(i+1).toStdString()]["y"] = ui->tableWidget_Init->item(i,2)->text().toDouble();
         jsonData["initialization"]["initialCondition"+QString::number(i+1).toStdString()]["z"] = ui->tableWidget_Init->item(i,3)->text().toDouble();
@@ -120,7 +128,7 @@ void MainWindow::getFields()
     for(int i=0;i<ui->tableWidget_Src->rowCount();i++)
     {
         jsonData["sources"]["source"+QString::number(i+1).toStdString()]["type"] =
-                qobject_cast<QComboBox*>(ui->tableWidget_Src->cellWidget(i,0))->currentText().toStdString();
+            qobject_cast<QComboBox*>(ui->tableWidget_Src->cellWidget(i,0))->currentText().toStdString();
         jsonData["sources"]["source"+QString::number(i+1).toStdString()]["fct"] = ui->tableWidget_Src->item(i,1)->text().toStdString();
         jsonData["sources"]["source"+QString::number(i+1).toStdString()]["x"] = ui->tableWidget_Src->item(i,2)->text().toDouble();
         jsonData["sources"]["source"+QString::number(i+1).toStdString()]["y"] = ui->tableWidget_Src->item(i,3)->text().toDouble();
@@ -135,7 +143,7 @@ void MainWindow::getFields()
 
 void MainWindow::setFields()
 {
-//    jsonData["configurationFile"]="file.conf";
+    //    jsonData["configurationFile"]="file.conf";
 
     ui->lineEdit_mesh->setText(QString::fromStdString(jsonData["mesh"]["File"]));
 
@@ -182,8 +190,8 @@ void MainWindow::setFields()
     ui->tableWidget_Init->setRowCount(jsonData["initialization"]["number"]);
     for(int i=0;i<ui->tableWidget_Init->rowCount();i++)
     {
-//        QString str = "initialCondition"+QString::number(i+1);
-//        ui->tableWidget_Init->setItem(i,0, new QTableWidgetItem(str));
+        //        QString str = "initialCondition"+QString::number(i+1);
+        //        ui->tableWidget_Init->setItem(i,0, new QTableWidgetItem(str));
 
         QComboBox *cb = new QComboBox;
         cb->addItems(listInit);
@@ -211,8 +219,8 @@ void MainWindow::setFields()
     ui->tableWidget_Obs->setRowCount(jsonData["observers"]["number"]);
     for(int i=0;i<ui->tableWidget_Obs->rowCount();i++)
     {
-//        QString str = "observer"+QString::number(i+1);
-//        ui->tableWidget_Obs->setItem(i,0, new QTableWidgetItem(str));
+        //        QString str = "observer"+QString::number(i+1);
+        //        ui->tableWidget_Obs->setItem(i,0, new QTableWidgetItem(str));
         nbr = jsonData["observers"]["observer"+QString::number(i+1).toStdString()]["x"];
         ui->tableWidget_Obs->setItem(i,0, new QTableWidgetItem(QString::number(nbr)));
         nbr = jsonData["observers"]["observer"+QString::number(i+1).toStdString()]["y"];
@@ -228,8 +236,8 @@ void MainWindow::setFields()
     ui->tableWidget_Src->setRowCount(jsonData["sources"]["number"]);
     for(int i=0;i<ui->tableWidget_Src->rowCount();i++)
     {
-//        QString str = "source"+QString::number(i+1);
-//        ui->tableWidget_Src->setItem(i,0, new QTableWidgetItem(str));
+        //        QString str = "source"+QString::number(i+1);
+        //        ui->tableWidget_Src->setItem(i,0, new QTableWidgetItem(str));
 
         QComboBox *cb = new QComboBox;
         cb->addItems(listSrc);
@@ -379,7 +387,7 @@ void MainWindow::on_action_Open_triggered()
     }
 
     QTextStream ReadFile(&file);
-//    ui->textEdit_config->setText(ReadFile.readAll());
+    //    ui->textEdit_config->setText(ReadFile.readAll());
 
     std::ifstream infile(projectFile.toStdString().c_str());
     infile >> jsonData;
@@ -427,11 +435,11 @@ void MainWindow::on_action_About_triggered()
     QString sdate=QString::number(dd)+"."+QString::number(mm)+"."+QString::number(yy);
 
     about_text=QCoreApplication::applicationName()+" "+
-            QCoreApplication::applicationVersion()+"\n\n"+
-            "built in "+sdate+" under GPL3 LICENSE\n"+
-            "- based on Qt "+QT_VERSION_STR+"\n"+
-            "- based on DGFEM-CAA-GUI "+VERSION+"\n\n"+
-            "Developpers:\n- Pr. Sofiane KHELLADI <sofiane.khelladi@ensam.eu>";
+                 QCoreApplication::applicationVersion()+"\n\n"+
+                 "built in "+sdate+" under GPL3 LICENSE\n"+
+                 "- based on Qt "+QT_VERSION_STR+"\n"+
+                 "- based on DGFEM-CAA-GUI "+VERSION+"\n\n"+
+                 "Developpers:\n- Pr. Sofiane KHELLADI <sofiane.khelladi@ensam.eu>";
 
     QMessageBox::about(this, "About TurboKit",about_text);
 }
@@ -496,9 +504,9 @@ void MainWindow::on_toolButton_Init_apply_clicked()
 
         for(int i=row0;i<row;i++)
         {
-//            QTableWidgetItem *item = new QTableWidgetItem("initialCondtition"+QString::number(i+1));
-//            item->setFlags(item->flags() ^ Qt::ItemIsEditable); // set item not editable
-//            ui->tableWidget_Init->setItem(i,0,item);
+            //            QTableWidgetItem *item = new QTableWidgetItem("initialCondtition"+QString::number(i+1));
+            //            item->setFlags(item->flags() ^ Qt::ItemIsEditable); // set item not editable
+            //            ui->tableWidget_Init->setItem(i,0,item);
             QComboBox *cb = new QComboBox;
             cb->addItems(listInit);
             cb->setStyleSheet("QComboBox {font: bold "+QString::number(12)+"px;}");
@@ -532,9 +540,9 @@ void MainWindow::on_toolButton_Obs_apply_clicked()
         row0=(row0<row)?row0:row;
         for(int i=row0;i<row;i++)
         {
-//            QTableWidgetItem *item = new QTableWidgetItem("observer"+QString::number(i+1));
-//            item->setFlags(item->flags() ^ Qt::ItemIsEditable); // set item not editable
-//            ui->tableWidget_Obs->setItem(i,0,item);
+            //            QTableWidgetItem *item = new QTableWidgetItem("observer"+QString::number(i+1));
+            //            item->setFlags(item->flags() ^ Qt::ItemIsEditable); // set item not editable
+            //            ui->tableWidget_Obs->setItem(i,0,item);
             ui->tableWidget_Obs->setItem(i,0, new QTableWidgetItem("0.0")); //X
             ui->tableWidget_Obs->setItem(i,1, new QTableWidgetItem("0.0")); //Y
             ui->tableWidget_Obs->setItem(i,2, new QTableWidgetItem("0.0")); //Z
@@ -561,9 +569,9 @@ void MainWindow::on_toolButton_Src_apply_clicked()
         row0=(row0<row)?row0:row;
         for(int i=row0;i<row;i++)
         {
-//            QTableWidgetItem *item = new QTableWidgetItem("source"+QString::number(i+1));
-//            item->setFlags(item->flags() ^ Qt::ItemIsEditable); // set item not editable
-//            ui->tableWidget_Src->setItem(i,0,item);
+            //            QTableWidgetItem *item = new QTableWidgetItem("source"+QString::number(i+1));
+            //            item->setFlags(item->flags() ^ Qt::ItemIsEditable); // set item not editable
+            //            ui->tableWidget_Src->setItem(i,0,item);
             QComboBox *cb = new QComboBox;
             cb->addItems(listSrc);
             cb->setStyleSheet("QComboBox {font: bold "+QString::number(12)+"px;}");
@@ -590,14 +598,14 @@ void MainWindow::on_toolButton_Src_apply_clicked()
 
 void MainWindow::on_commandLinkButton_save_clicked()
 {
-  if(projectFile!="")
-  {
-      getFields();
-      std::ofstream outfile(projectFile.toStdString().c_str());
-      outfile<<jsonData;
-      outfile.close();
-  }else
-      on_action_Save_triggered();
+    if(projectFile!="")
+    {
+        getFields();
+        std::ofstream outfile(projectFile.toStdString().c_str());
+        outfile<<jsonData;
+        outfile.close();
+    }else
+        on_action_Save_triggered();
 }
 
 
@@ -605,9 +613,10 @@ void MainWindow::on_actionRun_triggered()
 {
     std::string command;
     //m_position=0;
-//    ui->termwidget->sendText(tr("clear &"));
+    //    ui->termwidget->sendText(tr("clear &"));
     command=ui->lineEdit_solver->text().toStdString()+" "+projectFile.toStdString()+"\r";
     ui->termwidget->sendText(tr(command.c_str()));
+    timer->start(500);
 }
 
 
@@ -630,3 +639,118 @@ void MainWindow::on_toolButton_Load_solver_clicked()
     statusBar()->showMessage(tr("Mesh loaded"), 2000);
 }
 
+
+void MainWindow::on_action_View_results_triggered()
+{
+    std::string command;
+    command="paraview results.pvd\r";
+    ui->termwidget->sendText(tr(command.c_str()));
+}
+
+
+void MainWindow::on_toolButton_play_sound_clicked(bool checked)
+{
+    int observer_id=ui->tableWidget_Obs->currentRow()+1;
+    QString const obs_snd_file = "observer_"+QString::number(observer_id)+".wav";
+
+    if(ui->toolButton_play_sound->isEnabled())
+    {
+        ui->toolButton_play_sound->setEnabled(false);
+        ui->toolButton_stop_sound->setEnabled(true);
+    }
+
+    if(observer_id!=0)
+    {
+        QSound::play(obs_snd_file);
+    }
+    else
+    {
+        QMessageBox::warning(this,"Warning","Select a valid item...");
+    }
+
+
+
+}
+
+
+void MainWindow::on_toolButton_stop_sound_clicked()
+{
+    if(ui->toolButton_stop_sound->isEnabled())
+    {
+        ui->toolButton_play_sound->setEnabled(true);
+        ui->toolButton_stop_sound->setEnabled(false);
+    }
+}
+
+// update plot function
+void MainWindow::updatePlot()
+{
+    //    // calculate two new data points:
+    //    double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    //    static double lastPointKey = 0;
+    //    if (key-lastPointKey > 0.01) // at most add point every 10 ms
+    //    {
+    //        // add data to lines:
+    //        ui->qcustomplot_convergence->graph(0)->addData(key, qSin(key)+qrand()/(double)RAND_MAX*1*qSin(key/0.3843));
+    ////        ui->qcustomplot_convergence->addGraph();
+    //        ui->qcustomplot_convergence->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
+    //        // rescale value (vertical) axis to fit the current data:
+    //        ui->qcustomplot_convergence->graph(0)->rescaleValueAxis();
+    //        ui->qcustomplot_convergence->graph(1)->rescaleValueAxis(true);
+    //        lastPointKey = key;
+    //    }
+    //    // make key axis range scroll with the data (at a constant range size of 8):
+    //    ui->qcustomplot_convergence->xAxis->setRange(key, 8, Qt::AlignRight);
+    //    ui->qcustomplot_convergence->replot();
+
+    //    // calculate frames per second:
+    //    static double lastFpsKey;
+    //    static int frameCount;
+    //    ++frameCount;
+    //    if (key-lastFpsKey > 2) // average fps over 2 seconds
+    //    {
+    //        statusBar()->showMessage(
+    //                    QString("%1 FPS, Total Data points: %2")
+    //                    .arg(frameCount/(key-lastFpsKey), 0, 'f', 0)
+    //                    .arg(ui->qcustomplot_convergence->graph(0)->data()->size()+ui->qcustomplot_convergence->graph(1)->data()->size())
+    //                    , 0);
+    //        lastFpsKey = key;
+    //        frameCount = 0;
+    //    }
+    // read last line from results.csv file
+    // dispatch data on a vector
+    // plot data
+
+    // read only last line from results.csv file if the data is not the same as previous
+    std::string line;
+    std::ifstream myfile ("residuals.csv");
+    std::vector<double> data;
+    if (myfile.is_open())
+    {
+        int size_file = myfile.tellg();
+        myfile.seekg (-size_file, std::ios::end);
+        // read last line only
+        getline (myfile,line);
+
+        std::cout<<size_file<<std::endl;
+        std::cout<<line<<std::endl;
+
+        // split line
+        std::stringstream ss(line);
+        std::string item;
+        while (std::getline(ss, item, ';'))
+        {
+            data.push_back(std::stod(item));
+        }
+    }
+    else
+    {
+        std::cout << "Unable to open file";
+    }
+
+    // write data
+    std::cout << "myvector contains:";
+    for (std::vector<double>::iterator it = data.begin() ; it != data.end(); ++it)
+        std::cout << ' ' << *it;
+    std::cout << '\n';
+}

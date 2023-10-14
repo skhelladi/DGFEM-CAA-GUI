@@ -52,7 +52,7 @@
             <enum>QTabWidget::Rounded</enum>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="tab_Conv">
             <attribute name="title">
@@ -183,6 +183,7 @@
     </property>
     <addaction name="action_Load_Gmsh_mesh_file"/>
     <addaction name="actionRun"/>
+    <addaction name="action_View_results"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -223,17 +224,10 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout_3">
-     <item row="5" column="2">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QToolButton" name="toolButton_Load_solver">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_27">
        <property name="text">
-        <string>...</string>
+        <string>Solver</string>
        </property>
       </widget>
      </item>
@@ -244,10 +238,24 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_27">
+     <item row="8" column="0" colspan="2">
+      <widget class="QCommandLinkButton" name="commandLinkButton_save">
        <property name="text">
-        <string>Solver</string>
+        <string>&amp;Save</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QToolButton" name="toolButton_Load_solver">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
@@ -263,7 +271,7 @@
         <enum>QFrame::NoFrame</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="page_Mesh">
         <property name="geometry">
@@ -357,8 +365,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>392</width>
-          <height>427</height>
+          <width>388</width>
+          <height>441</height>
          </rect>
         </property>
         <attribute name="label">
@@ -763,7 +771,7 @@
         <attribute name="label">
          <string>Observers</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout_12">
+        <layout class="QGridLayout" name="gridLayout_2">
          <item row="1" column="0">
           <widget class="QLabel" name="label_13">
            <property name="text">
@@ -787,6 +795,58 @@
              <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
+         </item>
+         <item row="2" column="0" colspan="3">
+          <widget class="QTableWidget" name="tableWidget_Obs">
+           <attribute name="horizontalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="horizontalHeaderDefaultSectionSize">
+            <number>60</number>
+           </attribute>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="3">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QToolButton" name="toolButton_play_sound">
+             <property name="text">
+              <string>...</string>
+             </property>
+             <property name="icon">
+              <iconset theme="media-playback-start">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="toolButton_stop_sound">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>...</string>
+             </property>
+             <property name="icon">
+              <iconset theme="media-playback-stop">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
          <item row="0" column="0" colspan="3">
           <layout class="QGridLayout" name="gridLayout_8">
@@ -815,16 +875,6 @@
             </widget>
            </item>
           </layout>
-         </item>
-         <item row="4" column="0" colspan="3">
-          <widget class="QTableWidget" name="tableWidget_Obs">
-           <attribute name="horizontalHeaderCascadingSectionResizes">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="horizontalHeaderDefaultSectionSize">
-            <number>60</number>
-           </attribute>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -879,13 +929,6 @@
        </widget>
       </widget>
      </item>
-     <item row="8" column="0" colspan="2">
-      <widget class="QCommandLinkButton" name="commandLinkButton_save">
-       <property name="text">
-        <string>&amp;Save</string>
-       </property>
-      </widget>
-     </item>
      <item row="7" column="0" colspan="3">
       <widget class="Line" name="line_2">
        <property name="orientation">
@@ -913,6 +956,8 @@
    <addaction name="action_Quit"/>
    <addaction name="separator"/>
    <addaction name="actionRun"/>
+   <addaction name="separator"/>
+   <addaction name="action_View_results"/>
    <addaction name="separator"/>
    <addaction name="action_About"/>
   </widget>
@@ -1008,6 +1053,15 @@
    </property>
    <property name="text">
     <string>&amp;Load Gmsh mesh file</string>
+   </property>
+  </action>
+  <action name="action_View_results">
+   <property name="icon">
+    <iconset theme="applications-graphics">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;View results</string>
    </property>
   </action>
  </widget>

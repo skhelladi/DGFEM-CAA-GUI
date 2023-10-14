@@ -7,9 +7,14 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QDate>
+#include <QMessageBox>
+#include <QtMultimedia/QSound>
+
 #include <qtermwidget5/qtermwidget.h>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <iostream>
+#include <QTimer>
 
 #define VERSION "1.0.0a"
 
@@ -69,10 +74,19 @@ private slots:
 
     void on_toolButton_Load_solver_clicked();
 
+    void on_action_View_results_triggered();
+
+    void on_toolButton_play_sound_clicked(bool checked);
+
+    void on_toolButton_stop_sound_clicked();
+
+    void updatePlot();
+
 private:
     Ui::MainWindow *ui;
     void initTerminal();
     ordered_json jsonData;
     QString projectFile="";
+    QTimer *timer;
 };
 #endif // MAINWINDOW_H
