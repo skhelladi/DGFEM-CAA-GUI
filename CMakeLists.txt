@@ -14,9 +14,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QT_DIR "/opt/Qt/5.15.2/gcc_64/lib/cmake/Qt5")
 set(CMAKE_PREFIX_PATH "/opt/Qt/5.15.2/gcc_64")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets core gui opengl xml  sql svg charts webenginewidgets) #Qt${QT_VERSION_MAJOR}::PrintSupport)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets core gui opengl xml  sql svg webenginewidgets Charts) #Qt${QT_VERSION_MAJOR}::PrintSupport)
 #find_package(Qt5 REQUIRED COMPONENTS PrintSupport)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets PrintSupport Multimedia)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets PrintSupport Multimedia Charts)
 
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
@@ -54,7 +54,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(DGFEM-CAA-UI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport Qt${QT_VERSION_MAJOR}::Multimedia -lqtermwidget5)
+target_link_libraries(DGFEM-CAA-UI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport Qt${QT_VERSION_MAJOR}::Multimedia Qt${QT_VERSION_MAJOR}::Charts -lqtermwidget5)
 
 set_target_properties(DGFEM-CAA-UI PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER https://skhelladi.github.io/DGFEM-CAA/

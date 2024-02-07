@@ -5,6 +5,11 @@
 
 Implementation of a GUI for [DGFEM-CAA](https://github.com/skhelladi/DGFEM-CAA) code based en [Qt5](https://www.qt.io).
 
+# Screenshots
+
+![Screenshot](images/screenshot1.png)
+
+
 ## License
 
 This project is licensed under the GPL-3 license.
