@@ -11,12 +11,25 @@
 #include <QtMultimedia/QSound>
 
 #include <qtermwidget5/qtermwidget.h>
-#include <fstream>
 #include <nlohmann/json.hpp>
-#include <iostream>
 #include <QTimer>
 
+#include <QProcess>
+#include <QGridLayout>
+#include <QThread>
+#include <QTextStream>
+#include <QMessageBox>
+
+#include <vector>
+
+#include <QFileSystemWatcher>
+
+#include "charts.h"
+
+
 #define VERSION "1.0.0a"
+
+#define DEBUG false
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,6 +37,7 @@ QT_END_NAMESPACE
 
 using json = nlohmann::json;
 using ordered_json=nlohmann::ordered_json;
+using namespace std;
 
 class MainWindow : public QMainWindow
 {
@@ -35,11 +49,17 @@ public:
     void getFields();
     void setFields();
 
-protected:
-    void closeEvent(QCloseEvent *event);
+    void drawChart(vector<double> vec);
+    void on_watcher();
+    void set_watcher_pos_zero(){m_position=0;}
 
+protected :
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
+
+    void onFileChanged( const QString&);
+
     void on_toolButton_add_term_clicked();
 
     void on_action_Load_Gmsh_mesh_file_triggered();
@@ -80,9 +100,13 @@ private slots:
 
     void on_toolButton_stop_sound_clicked();
 
-    void updatePlot();
+    // void updatePlot();
 
     void on_actionAbout_Qt_triggered();
+
+    void on_toolButton_load_res_file_clicked();
+
+    void on_toolButton_res_pause_clicked(bool checked);
 
 private:
     Ui::MainWindow *ui;
@@ -90,5 +114,37 @@ private:
     ordered_json jsonData;
     QString projectFile="";
     QTimer *timer;
+
+    QChart          *chart;
+    QValueAxis      *axisX;
+    QValueAxis      *axisY;
+
+    QLineSeries   *series1;
+    QLineSeries   *series2;
+    QLineSeries   *series3;
+    QLineSeries   *series4;
+    QLineSeries   *series5;
+
+    size_t nb_series=5;
+    vector<QLineSeries*> series;
+
+//    vector<QLineSeries> series;
+
+    string          filename;
+
+    void save_config();
+    void load_config();
+
+    double max_val=-99999.9;
+    double min_val= 99999.9;
+
+    QFileSystemWatcher *m_watcher;
+    //QFile file;
+    QString file_name;
+
+    qint64 m_position;
+    qint64 m_size=0;
+
+    bool m_stop;
 };
 #endif // MAINWINDOW_H

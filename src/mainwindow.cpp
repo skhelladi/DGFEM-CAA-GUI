@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include <iostream>
+#include <fstream>
+
 QStringList listBC={"Absorbing","Reflecting"};
 QStringList listInit={"gaussian"};
 QStringList listSrc={"monopole","dipole","quadrupole","formula","file"};
@@ -11,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     initTerminal();
+
+    ui->toolButton_res_pause->setVisible(false);
 
     QStringList m_TableHeader;
     m_TableHeader<<"Name             "<<"Type                   ";
@@ -57,23 +62,77 @@ MainWindow::MainWindow(QWidget *parent)
 
     // timer setup
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
-    ui->qcustomplot_convergence->addGraph();
-    ui->qcustomplot_convergence->addGraph();
-
 
     showMaximized();
+
+    chart = new QChart();
+
+    for(size_t i=0;i<nb_series;i++)
+    {
+        series.push_back(new QLineSeries());
+    }
+
+    vector<QPen> pen;
+    pen.push_back(QPen(QColor(255, 0, 0)));
+    pen.push_back(QPen(QColor(0, 0, 255)));
+    pen.push_back(QPen(QColor(255, 0, 0, 100)));
+    pen.push_back(QPen(QColor(0, 0, 255, 100)));
+    pen.push_back(QPen(QColor(0, 255, 255, 100)));
+
+    vector<QString> Name = {"Pressure","Density","Velocity - X","Velocity - Y","Velocity - Z"};
+
+    axisX = new QValueAxis;
+    axisX->setRange(0, 1.0e-3);
+    axisX->setTitleText("Time");
+    axisX->setLabelFormat("%g");
+
+
+    axisY = new QValueAxis;
+    axisY->setRange(-10, 10);
+    axisY->setTitleText("|log10(Residuals)|");
+    axisY->setLabelFormat("%g");
+    axisY->setMinorTickCount(-1);
+
+
+    chart->addAxis(axisX, Qt::AlignBottom);
+    chart->addAxis(axisY, Qt::AlignLeft);
+
+    for(size_t i=0;i<nb_series;i++)
+    {
+        chart->addSeries(series[i]);
+
+        pen[i].setWidth(2);
+        series[i]->setPen(pen[i]);
+        series[i]->setName(Name[i]);
+        series[i]->attachAxis(axisX);
+        series[i]->attachAxis(axisY);
+    }
+
+
+
+
+    filename = ui->lineEdit_res_file->text().toStdString();
+    load_config();
 }
 
 
 MainWindow::~MainWindow()
 {
+    // delete series1;
+    // delete series2;
+    // delete series3;
+    // delete series4;
+    // delete series5;
+    for(size_t i=0;i<nb_series;i++)
+    {
+        delete series[i];
+    }
+    delete chart;
     delete ui;
 }
 
 void MainWindow::getFields()
 {
-    //    jsonData["configurationFile"]="file.conf";
     jsonData.clear();
     jsonData["mesh"]["File"]=ui->lineEdit_mesh->text().toStdString();
 
@@ -287,10 +346,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
     {
     case QMessageBox::Yes:
     {
+
+        for(size_t i=0;i<nb_series;i++)
+        {
+            series[i]->clear();
+        }
         event->accept();
-        //bool hasMdiChild = (activeMdiChild() != nullptr);
-        //if(hasMdiChild) ui->mdiArea->closeActiveSubWindow();
-        exit(0);
+
+        break;
     }
     case QMessageBox::Cancel:
         event->ignore();
@@ -299,7 +362,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
         break;
     }
-
 }
 
 void MainWindow::initTerminal()
@@ -327,11 +389,14 @@ void MainWindow::initTerminal()
             ui->termwidget->setKeyBindings(arg);
     }
     // info output
-    qDebug() << "* INFO *************************";
-    qDebug() << " availableKeyBindings:" << ui->termwidget->availableKeyBindings();
-    qDebug() << " keyBindings:" << ui->termwidget->keyBindings();
-    qDebug() << " availableColorSchemes:" << ui->termwidget->availableColorSchemes();
-    qDebug() << "* INFO END *********************";
+    if(DEBUG)
+    {
+        qDebug() << "* INFO *************************";
+        qDebug() << " availableKeyBindings:" << ui->termwidget->availableKeyBindings();
+        qDebug() << " keyBindings:" << ui->termwidget->keyBindings();
+        qDebug() << " availableColorSchemes:" << ui->termwidget->availableColorSchemes();
+        qDebug() << "* INFO END *********************";
+    }
 
     // real startup
     connect(ui->termwidget, SIGNAL(finished()), this, SLOT(close()));
@@ -387,7 +452,6 @@ void MainWindow::on_action_Open_triggered()
     }
 
     QTextStream ReadFile(&file);
-    //    ui->textEdit_config->setText(ReadFile.readAll());
 
     std::ifstream infile(projectFile.toStdString().c_str());
     infile >> jsonData;
@@ -612,13 +676,34 @@ void MainWindow::on_commandLinkButton_save_clicked()
 void MainWindow::on_actionRun_triggered()
 {
     std::string command;
-    //m_position=0;
-    //    ui->termwidget->sendText(tr("clear &"));
+
     command=ui->lineEdit_solver->text().toStdString()+" "+projectFile.toStdString()+"\r";
     ui->termwidget->sendText(tr(command.c_str()));
     timer->start(500);
-}
 
+
+    for(size_t i=0;i<nb_series;i++)
+    {
+        series[i]->clear();
+    }
+
+    ui->toolButton_res_pause->setVisible(true);
+    m_stop=ui->toolButton_res_pause->isChecked();
+
+    // chart->setTitle("Convergence rates");
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    ui->gridLayout_chart->addWidget(chartView,1,1);
+
+    set_watcher_pos_zero();
+
+    save_config();
+
+    on_watcher();
+
+    statusBar()->showMessage(tr("Reading file"));
+}
 
 void MainWindow::on_toolButton_Load_solver_clicked()
 {
@@ -639,14 +724,12 @@ void MainWindow::on_toolButton_Load_solver_clicked()
     statusBar()->showMessage(tr("Mesh loaded"), 2000);
 }
 
-
 void MainWindow::on_action_View_results_triggered()
 {
     std::string command;
     command="paraview results.pvd\r";
     ui->termwidget->sendText(tr(command.c_str()));
 }
-
 
 void MainWindow::on_toolButton_play_sound_clicked(bool checked)
 {
@@ -667,11 +750,7 @@ void MainWindow::on_toolButton_play_sound_clicked(bool checked)
     {
         QMessageBox::warning(this,"Warning","Select a valid item...");
     }
-
-
-
 }
-
 
 void MainWindow::on_toolButton_stop_sound_clicked()
 {
@@ -682,81 +761,152 @@ void MainWindow::on_toolButton_stop_sound_clicked()
     }
 }
 
-// update plot function
-void MainWindow::updatePlot()
-{
-    //    // calculate two new data points:
-    //    double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-    //    static double lastPointKey = 0;
-    //    if (key-lastPointKey > 0.01) // at most add point every 10 ms
-    //    {
-    //        // add data to lines:
-    //        ui->qcustomplot_convergence->graph(0)->addData(key, qSin(key)+qrand()/(double)RAND_MAX*1*qSin(key/0.3843));
-    ////        ui->qcustomplot_convergence->addGraph();
-    //        ui->qcustomplot_convergence->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-    //        // rescale value (vertical) axis to fit the current data:
-    //        ui->qcustomplot_convergence->graph(0)->rescaleValueAxis();
-    //        ui->qcustomplot_convergence->graph(1)->rescaleValueAxis(true);
-    //        lastPointKey = key;
-    //    }
-    //    // make key axis range scroll with the data (at a constant range size of 8):
-    //    ui->qcustomplot_convergence->xAxis->setRange(key, 8, Qt::AlignRight);
-    //    ui->qcustomplot_convergence->replot();
-
-    //    // calculate frames per second:
-    //    static double lastFpsKey;
-    //    static int frameCount;
-    //    ++frameCount;
-    //    if (key-lastFpsKey > 2) // average fps over 2 seconds
-    //    {
-    //        statusBar()->showMessage(
-    //                    QString("%1 FPS, Total Data points: %2")
-    //                    .arg(frameCount/(key-lastFpsKey), 0, 'f', 0)
-    //                    .arg(ui->qcustomplot_convergence->graph(0)->data()->size()+ui->qcustomplot_convergence->graph(1)->data()->size())
-    //                    , 0);
-    //        lastFpsKey = key;
-    //        frameCount = 0;
-    //    }
-    // read last line from results.csv file
-    // dispatch data on a vector
-    // plot data
-
-    // read only last line from results.csv file if the data is not the same as previous
-    std::string line;
-    std::ifstream myfile ("residuals.csv");
-    std::vector<double> data;
-    if (myfile.is_open())
-    {
-        int size_file = myfile.tellg();
-        myfile.seekg (-size_file, std::ios::end);
-        // read last line only
-        getline (myfile,line);
-
-        std::cout<<size_file<<std::endl;
-        std::cout<<line<<std::endl;
-
-        // split line
-        std::stringstream ss(line);
-        std::string item;
-        while (std::getline(ss, item, ';'))
-        {
-            data.push_back(std::stod(item));
-        }
-    }
-    else
-    {
-        std::cout << "Unable to open file";
-    }
-
-    // write data
-    std::cout << "myvector contains:";
-    for (std::vector<double>::iterator it = data.begin() ; it != data.end(); ++it)
-        std::cout << ' ' << *it;
-    std::cout << '\n';
-}
-
 void MainWindow::on_actionAbout_Qt_triggered()
 {
     QMessageBox::aboutQt(this, "About Qt");
+}
+
+void MainWindow::drawChart(vector<double> vec)
+{
+    for(size_t i=1;i<nb_series;i++)
+    {
+        vec[i] = (vec[i]>0)?abs(log10(vec[i])):0;
+        series[i]->append(vec[0], vec[i]);
+        series[i]->append(vec[0], vec[i]);
+        max_val=max(max_val,vec[i]);
+        min_val=min(min_val,vec[i]);
+    }
+
+    axisX->setRange(0,vec[0]);
+    axisY->setRange(min_val, max_val);
+    QCoreApplication::processEvents();
+    chart->update();
+}
+
+void MainWindow::save_config()
+{
+    ofstream outfile("init.conf");
+    outfile<<filename<<endl;
+    outfile.close();
+}
+
+void MainWindow::load_config()
+{
+    ifstream infile("init.conf");
+    if(infile.is_open())
+    {
+      string str;
+      infile>>str;
+
+      filename = str;
+      ui->lineEdit_res_file->setText(QString::fromStdString(filename));
+
+      setWindowTitle(tr("DGFEM-CAA-GUI - ")+QString::fromStdString(filename));
+    }
+    infile.close();
+}
+
+void MainWindow::on_watcher()
+{
+    m_watcher = new QFileSystemWatcher();
+    m_watcher->addPath(QString::fromStdString(filename));
+    max_val=-99999.9;
+    min_val= 99999.9;
+
+    for(size_t i=0;i<nb_series;i++)
+    {
+        series[i]->clear();
+    }
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    ui->gridLayout_chart->addWidget(chartView,1,1);
+
+    save_config();
+
+    QFile file(QString::fromStdString(filename));
+    file.close();
+    connect(m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(onFileChanged(const QString&)));
+}
+
+void MainWindow::onFileChanged( const QString& file_name)
+{
+    QFile file(QString::fromStdString(filename));
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        cerr<<"Fail to open data file..."<<endl;
+
+        QMessageBox msgBox;
+        msgBox.setText("Fail to open data file...\nPlease load a new data file");
+        msgBox.exec();
+
+        set_watcher_pos_zero();
+        file.close();
+        return;
+    }
+
+    QTextStream in(&file);
+    in.seek(m_position);
+
+    QString qline;
+
+    if(m_position==0)
+    {
+        in.readLineInto(&qline);
+        cerr<<qline.toStdString()<<endl;
+        m_position = in.pos();
+    }
+
+    // m_stop=false;
+
+    while (in.readLineInto(&qline)&&!m_stop)
+    {
+
+        m_size = file.size();
+
+        if(m_position!=0)
+        {
+            qline.replace(";"," ");
+
+            string line = qline.toStdString();
+
+            vector<double> vec;
+            stringstream ss( line );
+            double f;
+            while (ss >> f)
+                vec.push_back(f);
+
+            drawChart(vec);
+            chart->update();
+        }
+        m_position = in.pos();
+
+        if(m_size == file.size())
+        {
+            file.close();
+            return;
+        }
+    }
+
+    file.close();
+}
+
+void MainWindow::on_toolButton_load_res_file_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Residuals"), "",
+                                                    tr("Data file (*.txt);;(*.dat);;All Files (*)"));
+
+    filename = fileName.toStdString();
+    ui->lineEdit_res_file->setText(fileName);
+    save_config();
+
+    setWindowTitle(tr("DGFEM-CAA-GUI - ")+fileName);
+}
+
+void MainWindow::on_toolButton_res_pause_clicked(bool checked)
+{
+    m_stop = checked;
 }
 
