@@ -118,11 +118,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    // delete series1;
-    // delete series2;
-    // delete series3;
-    // delete series4;
-    // delete series5;
+   
     for(size_t i=0;i<nb_series;i++)
     {
         delete series[i];
@@ -249,8 +245,6 @@ void MainWindow::setFields()
     ui->tableWidget_Init->setRowCount(jsonData["initialization"]["number"]);
     for(int i=0;i<ui->tableWidget_Init->rowCount();i++)
     {
-        //        QString str = "initialCondition"+QString::number(i+1);
-        //        ui->tableWidget_Init->setItem(i,0, new QTableWidgetItem(str));
 
         QComboBox *cb = new QComboBox;
         cb->addItems(listInit);
@@ -278,8 +272,7 @@ void MainWindow::setFields()
     ui->tableWidget_Obs->setRowCount(jsonData["observers"]["number"]);
     for(int i=0;i<ui->tableWidget_Obs->rowCount();i++)
     {
-        //        QString str = "observer"+QString::number(i+1);
-        //        ui->tableWidget_Obs->setItem(i,0, new QTableWidgetItem(str));
+
         nbr = jsonData["observers"]["observer"+QString::number(i+1).toStdString()]["x"];
         ui->tableWidget_Obs->setItem(i,0, new QTableWidgetItem(QString::number(nbr)));
         nbr = jsonData["observers"]["observer"+QString::number(i+1).toStdString()]["y"];
@@ -295,9 +288,7 @@ void MainWindow::setFields()
     ui->tableWidget_Src->setRowCount(jsonData["sources"]["number"]);
     for(int i=0;i<ui->tableWidget_Src->rowCount();i++)
     {
-        //        QString str = "source"+QString::number(i+1);
-        //        ui->tableWidget_Src->setItem(i,0, new QTableWidgetItem(str));
-
+    
         QComboBox *cb = new QComboBox;
         cb->addItems(listSrc);
         cb->setStyleSheet("QComboBox {font: bold "+QString::number(12)+"px;}");
